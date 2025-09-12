@@ -1,30 +1,54 @@
 package implementation;
 
-import interpreter.PrintScriptFormatter;
-import interpreter.PrintScriptInterpreter;
-import interpreter.PrintScriptLinter;
+import formatter.Formatter;
+import interpreter.*;
+import lexer.util.LexerUtil;
+import parser.Parser;
 
-import java.io.BufferedInputStream;
-import java.util.Arrays;
+import static common.util.SegmentUtilsKt.segmentsBySemicolon;
 
-public class CustomImplementationFactory implements PrintScriptFactory {
+public class CustomImplementationFactory implements PrintScriptFactory{
 
+    /*
+     your PrintScript implementation should be returned here.
+     make sure to ADAPT your implementation to PrintScriptInterpreter interface.
+     Dummy impl: return (src, version, emitter, handler) -> { };
+     */
     @Override
     public PrintScriptInterpreter interpreter() {
-        // your PrintScript implementation should be returned here.
-        // make sure to ADAPT your implementation to PrintScriptInterpreter interface.
-        throw new NotImplementedException("Needs implementation"); // TODO: implement
+       return (src, version, emitter, handler, provider) -> {
+           var lexer = LexerUtil.Companion.createLexer(version);
+           var parser = new Parser();
+           var interpreter = new Interpreter();
 
-        // Dummy impl: return (src, version, emitter, handler) -> { };
+           var iterator = segmentsBySemicolon(src).iterator();
+           while (iterator.hasNext()) {
+               String segment = iterator.next();
+               try {
+                   var tokens = lexer.lex(segment);
+                   var ast = parser.parse(tokens);
+                   var lines = interpreter.interpret(ast);
+
+                   for (var line : lines) {
+                       emitter.print(line);
+                   }
+               } catch (Throwable t) {
+                   handler.reportError(t.getMessage());
+               }
+           }
+       };
     }
 
+    /*
+     your PrintScript formatter should be returned here.
+     make sure to ADAPT your formatter to PrintScriptFormatter interface.
+     Dummy impl: return (src, version, config, writer) -> { };
+     */
     @Override
     public PrintScriptFormatter formatter() {
-        // your PrintScript formatter should be returned here.
-        // make sure to ADAPT your formatter to PrintScriptFormatter interface.
-        throw new NotImplementedException("Needs implementation"); // TODO: implement
-
-        // Dummy impl: return (src, version, config, writer) -> { };
+        return (src, version, config, writer) -> {
+            var formatter = new Formatter();
+        };
     }
 
     @Override
