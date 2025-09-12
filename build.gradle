@@ -2,16 +2,18 @@ plugins {
     id 'java'
 }
 
+def env = new Properties()
+file(".env").withInputStream { env.load(it) }
+
 repositories {
     mavenLocal()
     mavenCentral()
-// TODO: uncomment to be able to fetch packages in your own repository
 //    maven {
 //        name = "GitHubPackages"
-//        url = uri("https://maven.pkg.github.com/<your-username>/printscript")
+//        url = uri("https://maven.pkg.github.com/IngSisG10/printscript-tp1")
 //        credentials {
-//            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-//            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+//            username = env.getProperty("GITHUB_USER")
+//            password = env.getProperty("GITHUB_KEY")
 //        }
 //    }
 }
@@ -23,12 +25,22 @@ java {
 }
 
 test {
-    minHeapSize = "5m" // initial heap size
-    maxHeapSize = "7m" // maximum heap size
+    minHeapSize = "1m" // initial heap size
+    maxHeapSize = "2m" // maximum heap size
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
 }
 
 dependencies {
     testImplementation 'junit:junit:4.13.1'
+    implementation 'com.ingsis.grupo10:printscript-interpreter:1.0.0-SNAPSHOT' changing true
+    implementation 'com.ingsis.grupo10:printscript-parser:1.0.0-SNAPSHOT' changing true
+    implementation 'com.ingsis.grupo10:printscript-lexer:1.0.0-SNAPSHOT' changing true
+    implementation 'com.ingsis.grupo10:printscript-common:1.0.0-SNAPSHOT' changing true
+    implementation 'com.ingsis.grupo10:printscript-formatter:1.0.0-SNAPSHOT' changing true
+    implementation 'com.ingsis.grupo10:printscript-linter:1.0.0-SNAPSHOT' changing true
 }
 
 test {
