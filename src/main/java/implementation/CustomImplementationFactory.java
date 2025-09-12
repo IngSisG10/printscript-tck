@@ -47,7 +47,7 @@ public class CustomImplementationFactory implements PrintScriptFactory{
     @Override
     public PrintScriptFormatter formatter() {
         return (src, version, config, writer) -> {
-            var formatter = new Formatter();
+            throw new NotImplementedException("Needs implementation"); // TODO: implement
         };
     }
 
