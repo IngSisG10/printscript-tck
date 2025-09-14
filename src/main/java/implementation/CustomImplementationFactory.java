@@ -1,10 +1,14 @@
 package implementation;
 
 import formatter.Formatter;
+import formatter.util.FormatterUtil;
 import interpreter.*;
+import lexer.Lexer;
 import lexer.util.LexerUtil;
+import linter.Linter;
+import linter.util.LinterUtil;
 import parser.Parser;
-
+import java.io.IOException;
 import static common.util.SegmentUtilsKt.segmentsBySemicolon;
 
 public class CustomImplementationFactory implements PrintScriptFactory{
@@ -12,7 +16,7 @@ public class CustomImplementationFactory implements PrintScriptFactory{
     /*
      your PrintScript implementation should be returned here.
      make sure to ADAPT your implementation to PrintScriptInterpreter interface.
-     Dummy impl: return (src, version, emitter, handler) -> { };
+     Dummy impl: return (src, version, emitter, handler, provider) -> { };
      */
     @Override
     public PrintScriptInterpreter interpreter() {
@@ -47,14 +51,45 @@ public class CustomImplementationFactory implements PrintScriptFactory{
     @Override
     public PrintScriptFormatter formatter() {
         return (src, version, config, writer) -> {
-            throw new NotImplementedException("Needs implementation"); // TODO: implement
+            Lexer lexer = LexerUtil.Companion.createLexer(version);
+            Formatter formatter = FormatterUtil.Companion.createFormatter(config.toString(), version);
+            var iterator = segmentsBySemicolon(src).iterator();
+            while (iterator.hasNext()) {
+                String segment = iterator.next();
+                try {
+                    var tokens = lexer.lex(segment);
+                    var formatterText = formatter.format(tokens);
+                    writer.write(formatterText);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         };
     }
 
+    /*
+     your PrintScript linter should be returned here.
+     make sure to ADAPT your linter to PrintScriptLinter interface.
+     Dummy impl: return (src, version, config, writer) -> { };
+     */
     @Override
     public PrintScriptLinter linter() {
-        // your PrintScript linter should be returned here.
-        // make sure to ADAPT your linter to PrintScriptLinter interface.
-        throw new NotImplementedException("Needs implementation"); // TODO: implement
+        return (src, version, config, handler) -> {
+            Lexer lexer = LexerUtil.Companion.createLexer(version);
+            Linter linter = LinterUtil.Companion.createLinter(config.toString(), version);
+            var iterator = segmentsBySemicolon(src).iterator();
+            while (iterator.hasNext()) {
+                String segment = iterator.next();
+                try {
+                    var tokens = lexer.lex(segment);
+                    var errors = linter.lint(tokens);
+                    for (var error : errors) {
+                        handler.reportError(error.getMessage());
+                    }
+                } catch (Throwable t) {
+                    handler.reportError(t.getMessage());
+                }
+            }
+        };
     }
 }
