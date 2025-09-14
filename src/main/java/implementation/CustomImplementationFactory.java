@@ -9,6 +9,8 @@ import linter.Linter;
 import linter.util.LinterUtil;
 import parser.Parser;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import static common.util.SegmentUtilsKt.segmentsBySemicolon;
 
 public class CustomImplementationFactory implements PrintScriptFactory{
@@ -52,7 +54,14 @@ public class CustomImplementationFactory implements PrintScriptFactory{
     public PrintScriptFormatter formatter() {
         return (src, version, config, writer) -> {
             Lexer lexer = LexerUtil.Companion.createLexer(version);
-            Formatter formatter = FormatterUtil.Companion.createFormatter(config.toString(), version);
+            byte[] stringBytes = new byte[0]; // read all bytes into a byte array
+            try {
+                stringBytes = config.readAllBytes();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String string = new String(stringBytes); // decodes stringBytes into a String
+            Formatter formatter = FormatterUtil.Companion.createFormatter(string, version);
             var iterator = segmentsBySemicolon(src).iterator();
             while (iterator.hasNext()) {
                 String segment = iterator.next();
@@ -76,7 +85,14 @@ public class CustomImplementationFactory implements PrintScriptFactory{
     public PrintScriptLinter linter() {
         return (src, version, config, handler) -> {
             Lexer lexer = LexerUtil.Companion.createLexer(version);
-            Linter linter = LinterUtil.Companion.createLinter(config.toString(), version);
+            byte[] stringBytes = new byte[0]; // read all bytes into a byte array
+            try {
+                stringBytes = config.readAllBytes();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String string = new String(stringBytes);
+            Linter linter = LinterUtil.Companion.createLinter(string, version);
             var iterator = segmentsBySemicolon(src).iterator();
             while (iterator.hasNext()) {
                 String segment = iterator.next();
