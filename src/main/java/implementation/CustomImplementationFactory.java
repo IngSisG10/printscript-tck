@@ -23,7 +23,7 @@ public class CustomImplementationFactory implements PrintScriptFactory{
        return (src, version, emitter, handler, provider) -> {
            var lexer = LexerUtil.Companion.createLexer(version);
            var parser = new Parser();
-           var interpreter = new Interpreter();
+           var interpreter = new Interpreter(provider::input);
 
            var iterator = segmentsBySemicolon(src).iterator();
            while (iterator.hasNext()) {
