@@ -11,16 +11,16 @@ if (envFile.isFile() && envFile.canRead()) {
 }
 
 repositories {
-//    mavenLocal()
+    mavenLocal()
     mavenCentral()
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/IngSisG10/printscript-tp1")
-        credentials {
-            username = env.getProperty("GITHUB_ACTOR")
-            password = env.getProperty("GITHUB_TOKEN")
-        }
-    }
+//    maven {
+//        name = "GitHubPackages"
+//        url = uri("https://maven.pkg.github.com/IngSisG10/printscript-tp1")
+//        credentials {
+//            username = env.getProperty("GITHUB_ACTOR")
+//            password = env.getProperty("GITHUB_TOKEN")
+//        }
+//    }
 }
 
 java {
