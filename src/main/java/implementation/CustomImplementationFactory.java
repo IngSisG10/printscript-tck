@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static common.util.SegmentUtilsKt.segmentsBySemicolon;
+import static common.util.SegmentUtilsKt.segmentsBySemicolonPreserveWhitespace;
 
 public class CustomImplementationFactory implements PrintScriptFactory{
 
@@ -62,16 +63,17 @@ public class CustomImplementationFactory implements PrintScriptFactory{
             }
             String string = new String(stringBytes); // decodes stringBytes into a String
             Formatter formatter = FormatterUtil.Companion.createFormatter(string, version);
-            var iterator = segmentsBySemicolon(src).iterator();
+            var iterator = segmentsBySemicolonPreserveWhitespace(src).iterator();
+            String formatterText = "";
             while (iterator.hasNext()) {
                 String segment = iterator.next();
-                try {
-                    var tokens = lexer.lex(segment);
-                    var formatterText = formatter.format(tokens);
-                    writer.write(formatterText);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                var tokens = lexer.lex(segment);
+                formatterText = formatterText + formatter.format(tokens);
+            }
+            try {
+                writer.write(formatterText);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         };
     }
@@ -93,7 +95,7 @@ public class CustomImplementationFactory implements PrintScriptFactory{
             }
             String string = new String(stringBytes);
             Linter linter = LinterUtil.Companion.createLinter(string, version);
-            var iterator = segmentsBySemicolon(src).iterator();
+            var iterator = segmentsBySemicolonPreserveWhitespace(src).iterator();
             while (iterator.hasNext()) {
                 String segment = iterator.next();
                 try {
