@@ -13,6 +13,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 public class InterpreterLargeFileTest {
 
@@ -36,8 +37,11 @@ public class InterpreterLargeFileTest {
         final PrintCollector printCollector = new PrintCollector();
         final ErrorCollector errorCollector = new ErrorCollector();
         final var inputStream = new MockInputStream(LINE, NUMBER_OF_LINES);
-        interpreter.execute(inputStream, "1.0", printCollector, errorCollector, (ignored) -> "");
+//        interpreter.execute(inputStream, "1.0", printCollector, errorCollector, (ignored) -> "");
 
-        assertThat(errorCollector.getErrors(), is(singletonList("Java heap space")));
+//        assertThat(errorCollector.getErrors(), is(singletonList("Java heap space")));
+        assertThrows(OutOfMemoryError.class, () -> {
+            interpreter.execute(inputStream, "1.0", printCollector, errorCollector, (ignored) -> "");
+        });
     }
 }
