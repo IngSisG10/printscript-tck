@@ -15,8 +15,8 @@ repositories {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/IngSisG10/printscript-tp1")
         credentials {
-            username = env.getProperty("GITHUB_ACTOR")
-            password = env.getProperty("GITHUB_TOKEN")
+            username = env.getProperty("GITHUB_ACTOR") ?: System.getenv("USERNAME")
+            password = env.getProperty("GITHUB_TOKEN") ?: System.getenv("TOKEN")
         }
     }
 }
