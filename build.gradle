@@ -6,21 +6,19 @@ def env = new Properties()
 def envFile = file('.env')
 if (envFile.isFile() && envFile.canRead()) {
     envFile.withInputStream { env.load(it) }
-    println env.getProperty("GITHUB_ACTOR") ?: ""
-    println env.getProperty("GITHUB_TOKEN") ?: ""
 }
 
 repositories {
-    mavenLocal()
+//    mavenLocal()
     mavenCentral()
-//    maven {
-//        name = "GitHubPackages"
-//        url = uri("https://maven.pkg.github.com/IngSisG10/printscript-tp1")
-//        credentials {
-//            username = env.getProperty("GITHUB_ACTOR")
-//            password = env.getProperty("GITHUB_TOKEN")
-//        }
-//    }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/IngSisG10/printscript-tp1")
+        credentials {
+            username = env.getProperty("GITHUB_ACTOR")
+            password = env.getProperty("GITHUB_TOKEN")
+        }
+    }
 }
 
 java {
@@ -30,8 +28,8 @@ java {
 }
 
 test {
-    minHeapSize = "4m" // initial heap size
-    maxHeapSize = "6m" // maximum heap size
+    minHeapSize = "3m"
+    maxHeapSize = "4m"
 }
 
 configurations.all {

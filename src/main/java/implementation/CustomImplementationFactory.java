@@ -9,8 +9,6 @@ import linter.Linter;
 import linter.util.LinterUtil;
 import parser.Parser;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 import static common.util.SegmentUtilsKt.segmentsBySemicolon;
 import static common.util.SegmentUtilsKt.segmentsBySemicolonPreserveWhitespace;
 
@@ -39,6 +37,9 @@ public class CustomImplementationFactory implements PrintScriptFactory{
                    for (var line : lines) {
                        emitter.print(line);
                    }
+               } catch (OutOfMemoryError oom) {
+                   handler.reportError("Java heap space");
+                   return;
                } catch (Throwable t) {
                    handler.reportError(t.getMessage());
                }
