@@ -2,12 +2,6 @@ plugins {
     id 'java'
 }
 
-def env = new Properties()
-def envFile = file('.env')
-if (envFile.isFile() && envFile.canRead()) {
-    envFile.withInputStream { env.load(it) }
-}
-
 repositories {
 //    mavenLocal()
     mavenCentral()
@@ -15,8 +9,8 @@ repositories {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/IngSisG10/printscript-tp1")
         credentials {
-            username = env.getProperty("GITHUB_ACTOR") ?: System.getenv("USERNAME")
-            password = env.getProperty("GITHUB_TOKEN") ?: System.getenv("TOKEN")
+            username = System.getenv("USERNAME")
+            password = System.getenv("TOKEN")
         }
     }
 }
