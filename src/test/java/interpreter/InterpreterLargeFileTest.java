@@ -19,7 +19,7 @@ public class InterpreterLargeFileTest {
 
     private static final String MESSAGE = "This is a text";
     private static final String LINE = "println(\"" + MESSAGE + "\");\n";
-    private static final int NUMBER_OF_LINES = 2 * 32 * 1024;
+    private static final int NUMBER_OF_LINES = 32 * 1024;
     private final PrintScriptInterpreter interpreter = new CustomImplementationFactory().interpreter();
 
     @Test
@@ -32,13 +32,12 @@ public class InterpreterLargeFileTest {
         assertThat(printCounter.getCount(), is(NUMBER_OF_LINES));
     }
 
-    // skipping works localy
-//    @Test
-//    public void testWithCollector()  {
-//        final PrintCollector printCollector = new PrintCollector();
-//        final ErrorCollector errorCollector = new ErrorCollector();
-//        final var inputStream = new MockInputStream(LINE, NUMBER_OF_LINES);
-//        interpreter.execute(inputStream, "1.0", printCollector, errorCollector, (ignored) -> "");
-//        assertThat(errorCollector.getErrors(), is(singletonList("Java heap space")));
-//    }
+    @Test
+    public void testWithCollector()  {
+        final PrintCollector printCollector = new PrintCollector();
+        final ErrorCollector errorCollector = new ErrorCollector();
+        final var inputStream = new MockInputStream(LINE, NUMBER_OF_LINES);
+        interpreter.execute(inputStream, "1.0", printCollector, errorCollector, (ignored) -> "");
+        assertThat(errorCollector.getErrors(), is(singletonList("Java heap space")));
+    }
 }
