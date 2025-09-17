@@ -25,11 +25,10 @@ public class CustomImplementationFactory implements PrintScriptFactory{
            var lexer = LexerUtil.Companion.createLexer(version);
            var parser = new Parser();
            var interpreter = new Interpreter(provider::input);
-
-           var iterator = segmentsBySemicolon(src).iterator();
-           while (iterator.hasNext()) {
-               String segment = iterator.next();
-               try {
+           try {
+               var iterator = segmentsBySemicolon(src).iterator();
+               while (iterator.hasNext()) {
+                   String segment = iterator.next();
                    var tokens = lexer.lex(segment);
                    var ast = parser.parse(tokens);
                    var lines = interpreter.interpret(ast);
@@ -37,12 +36,12 @@ public class CustomImplementationFactory implements PrintScriptFactory{
                    for (var line : lines) {
                        emitter.print(line);
                    }
-               } catch (OutOfMemoryError oom) {
-                   handler.reportError("Java heap space");
-                   return;
-               } catch (Throwable t) {
-                   handler.reportError(t.getMessage());
                }
+           } catch (OutOfMemoryError oom) {
+               handler.reportError("Java heap space");
+               return;
+           } catch (Throwable t) {
+               handler.reportError(t.getMessage());
            }
        };
     }
