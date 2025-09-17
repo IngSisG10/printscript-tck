@@ -39,7 +39,6 @@ public class CustomImplementationFactory implements PrintScriptFactory{
                }
            } catch (OutOfMemoryError oom) {
                handler.reportError("Java heap space");
-               return;
            } catch (Throwable t) {
                handler.reportError(t.getMessage());
            }
