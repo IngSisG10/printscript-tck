@@ -30,6 +30,9 @@ java {
 test {
     minHeapSize = "5m"
     maxHeapSize = "6m"
+
+    maxParallelForks = 1
+    forkEvery = 1
 }
 
 configurations.all {
