@@ -28,8 +28,8 @@ java {
 }
 
 test {
-    minHeapSize = "4m"
-    maxHeapSize = "5m"
+    minHeapSize = "3m"
+    maxHeapSize = "4m"
 
     maxParallelForks = 1
     forkEvery = 1
